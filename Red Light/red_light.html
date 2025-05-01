@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Red Light Control</title>
+  <style>
+    body {
+      background: #111;
+      color: white;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .light-container {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .light {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background-color: #440000;
+      box-shadow: none;
+      transition: all 0.3s ease-in-out;
+    }
+
+    .light.on {
+      background-color: red;
+      box-shadow: 0 0 40px 15px red;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #222;
+      color: white;
+      border: 2px solid #555;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    button:hover {
+      background-color: #333;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Red Light Switch</h1>
+
+  <div class="light-container">
+    <div id="light" class="light"></div>
+    <button onclick="toggleLight()">Toggle</button>
+  </div>
+
+  <script>
+    const light = document.getElementById('light');
+    let isOn = false;
+
+    function toggleLight() {
+      isOn = !isOn;
+      light.classList.toggle('on', isOn);
+    }
+  </script>
+
+</body>
+</html>
