@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Red Light Toggle</title>
+  <style>
+    body {
+      background-color: #1e1e1e;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: 'Arial', sans-serif;
+    }
+
+    .container {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .light {
+      width: 100px;
+      height: 100px;
+      background-color: #300;
+      border-radius: 50%;
+      box-shadow: inset 0 0 20px #100;
+      transition: all 0.3s ease;
+    }
+
+    .light.on {
+      background-color: red;
+      box-shadow:
+        0 0 30px 10px red,
+        0 0 60px 30px red,
+        inset 0 0 20px #ffaaaa;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #444;
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    button:hover {
+      background-color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="light" class="light"></div>
+    <button id="toggleBtn">Turn On</button>
+  </div>
+
+  <script>
+    const light = document.getElementById('light');
+    const button = document.getElementById('toggleBtn');
+
+    let isOn = false;
+
+    button.addEventListener('click', () => {
+      isOn = !isOn;
+      light.classList.toggle('on', isOn);
+      button.textContent = isOn ? 'Turn Off' : 'Turn On';
+    });
+  </script>
+</body>
+</html>
