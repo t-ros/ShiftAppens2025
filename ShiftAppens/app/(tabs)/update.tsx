@@ -1,12 +1,12 @@
 import type React from "react"
 import { View, Text, StyleSheet } from "react-native"
 
-const ReservationsScreen: React.FC = () => {
+const UpdatesScreen: React.FC = () => {
   return (
     <View style={styles.container}>
       <View style={styles.content}>
-        <Text style={styles.text}>My Reservations</Text>
-        <Text style={styles.subText}>You don't have any reservations yet.</Text>
+        <Text style={styles.text}>Updates</Text>
+        <Text style={styles.subText}>No new updates at this time.</Text>
       </View>
     </View>
   )
@@ -36,4 +36,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default ReservationsScreen
+export default UpdatesScreen
