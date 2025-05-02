@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+
+<title>Traffic Light Game</title>
+
+<style>
+
+  /* Reset and body style */
+
+  * {
+
+    box-sizing: border-box;
+
+  }
+
+  body {
+
+    margin: 0;
+
+    background: #121212;
+
+    color: #eee;
+
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: flex-start;
+
+    height: 100vh;
+
+    padding: 20px;
+
+    overflow: hidden;
+
+  }
+
+
+  h1 {
+
+    margin-bottom: 5px;
+
+    font-weight: 700;
+
+    font-size: 1.8rem;
+
+    color: #f0a500;
+
+    text-shadow: 0 0 6px #f0a500aa;
+
+  }
+
+
+  #game-container {
+
+    flex-grow: 1;
+
+    width: 320px;
+
+    max-width: 95vw;
+
+    background: #222;
+
+    border-radius: 12px;
+
+    padding: 12px;
+
+    box-shadow: 0 0 15px #00ff0080 inset;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    user-select: none;
+
+  }
+
+
+  #traffic-light {
+
+    width: 80px;
+
+    background-color: #222;
+
+    border-radius: 20px;
+
+    padding: 15px 0;
+
+    box-shadow: 0 0 20px #111 inset;
+
+    margin-bottom: 15px;
+
+  }
+
+  .light {
+
+    width: 50px;
+
+    height: 50px;
+
+    margin: 12px auto;
+
+    background-color: #444;
+
+    border-radius: 50%;
+
+    box-shadow: inset 0 0 10px #000;
+
+    transition: background-color 0.5s, box-shadow 0.5s;
+
+  }
+
+  .light.red.active {
+
+    background-color: #ff3b3b;
+
+    box-shadow:
+
+      0 0 20px #ff3b3b,
+
+      inset 0 0 10px #ff6b6b;
+
+  }
+
+  .light.green.active {
+
+    background-color: #4eff54;
+
+    box-shadow:
+
+      0 0 20px #4eff54,
+
+      inset 0 0 10px #7eff7d;
+
+  }
+
+
+  #instructions {
+
+    font-size: 0.9rem;
+
+    color: #ccc;
+
+    text-align: center;
+
+    margin-top: 0;
+
+    margin-bottom: 10px;
+
+    max-width: 280px;
+
+    line-height: 1.3;
+
+  }
+
+
+  #game-grid {
+
+    position: relative;
+
+    background: #111;
+
+    border-radius: 15px;
+
+    width: 280px;
+
+    height: 280px;
+
+    display: grid;
+
+    grid-template-columns: repeat(7, 1fr);
+
+    grid-template-rows: repeat(7, 1fr);
+
+    gap: 4px;
+
+    user-select: none;
+
+  }
+
+
+  .cell {
+
+    background: #333;
+
+    border-radius: 6px;
+
+    box-shadow:
+
+      inset 0 0 4px #222,
+
+      0 2px 6px #111;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    position: relative;
+
+  }
+
+
+  .cell.goal {
+
+    background: #224422;
+
+    box-shadow:
+
+      inset 0 0 10px #33cc33,
+
+      0 0 5px #33cc33;
+
+  }
+
+
+  .player {
+
+    width: 32px;
+
+    height: 32px;
+
+    background: #f0a500;
+
+    border-radius: 6px;
+
+    box-shadow: 0 0 10px #f0a500aa;
+
+    transition: transform 0.1s ease;
+
+    position: relative;
+
+  }
+
+
+  #status {
+
+    margin-top: 12px;
+
+    height: 28px;
+
+    font-size: 1.1rem;
+
+    min-height: 32px;
+
+    font-weight: 600;
+
+    color: #f0a500;
+
+    text-align: center;
+
+    text-shadow: 0 0 12px #f0a50044;
+
+  }
+
+
+  #controls {
+
+    margin-top: 15px;
+
+    display: flex;
+
+    justify-content: center;
+
+    gap: 12px;
+
+  }
+
+
+  .btn {
+
+    background: #292929;
+
+    border: none;
+
+    border-radius: 10px;
+
+    color: #eee;
+
+    font-size: 1.25rem;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    width: 50px;
+
+    height: 50px;
+
+    box-shadow: 0 0 6px #000 inset;
+
+    transition: background-color 0.3s, box-shadow 0.3s;
+
+    user-select: none;
+
+  }
+
+  .btn:hover {
+
+    background-color: #f0a500;
+
+    color: #222;
+
+    box-shadow: 0 0 12px #f0a500 inset;
+
+  }
+
+  .btn:active {
+
+    background-color: #f0a500cc;
+
+    box-shadow: 0 0 20px #f0a500 inset;
+
+  }
+
+
+  #fail-overlay {
+
+    position: fixed;
+
+    top: 0; left: 0; right: 0; bottom: 0;
+
+    background: rgba(50, 0, 0, 0.85);
+
+    z-index: 1000;
+
+    display: none;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    align-items: center;
+
+    color: #ff3333;
+
+  }
+
+
+  #fail-overlay.show {
+
+    display: flex;
+
+  }
+
+
+  #fail-overlay h2 {
+
+    font-size: 2.2rem;
+
+    margin-bottom: 15px;
+
+    text-shadow: 0 0 20px #ff4444cc;
+
+  }
+
+
+  #fail-overlay button {
+
+    background: #ff3333;
+
+    border: none;
+
+    color: white;
+
+    font-size: 1.2rem;
+
+    border-radius: 10px;
+
+    padding: 12px 24px;
+
+    cursor: pointer;
+
+    box-shadow: 0 0 12px #ff3333cc;
+
+    user-select: none;
+
+  }
+
+  #fail-overlay button:hover {
+
+    background: #ff5555;
+
+  }
+
+
+  @media (max-width: 600px) {
+
+    body {
+
+      padding: 10px 5px;
+
+    }
+
+    #game-container {
+
+      width: 100%;
+
+      padding: 8px;
+
+      box-shadow: 0 0 12px #00ff0080 inset;
+
+    }
+
+    #game-grid {
+
+      width: 100%;
+
+      height: 280px;
+
+      gap: 3px;
+
+      border-radius: 12px;
+
+    }
+
+    .player {
+
+      width: 28px;
+
+      height: 28px;
+
+    }
+
+    .btn {
+
+      width: 44px;
+
+      height: 44px;
+
+      font-size: 1.1rem;
+
+    }
+
+    #traffic-light {
+
+      width: 70px;
+
+      padding: 10px 0;
+
+      margin-bottom: 10px;
+
+    }
+
+    .light {
+
+      width: 40px;
+
+      height: 40px;
+
+      margin: 10px auto;
+
+    }
+
+  }
+
+</style>
+
+</head>
+
+<body>
+
+<h1>Traffic Light Game</h1>
+
+<p id="instructions">
+
+  Reach the green goal while the light is <strong>green</strong>. You can only move while green — move during red and get penalized!
+
+</p>
+
+<div id="game-container" role="main" aria-label="Traffic light game area">
+
+  <div id="traffic-light" aria-live="polite" aria-atomic="true" aria-label="Traffic light status">
+
+    <div class="light red" id="redLight"></div>
+
+    <div class="light green" id="greenLight"></div>
+
+  </div>
+
+  <div id="game-grid" aria-describedby="instructions" tabindex="0" role="application" aria-label="Game grid where player moves">
+
+    <!-- Grid cells generated by JS -->
+
+  </div>
+
+  <div id="status" aria-live="polite" aria-atomic="true" aria-relevant="text"></div>
+
+  <div id="controls" aria-label="Move controls">
+
+    <button class="btn" id="btn-up" aria-label="Move Up" title="Move Up">↑</button>
+
+    <button class="btn" id="btn-left" aria-label="Move Left" title="Move Left">←</button>
+
+    <button class="btn" id="btn-down" aria-label="Move Down" title="Move Down">↓</button>
+
+    <button class="btn" id="btn-right" aria-label="Move Right" title="Move Right">→</button>
+
+  </div>
+
+</div>
+
+
+<div id="fail-overlay" role="alertdialog" aria-modal="true" aria-labelledby="fail-title" aria-describedby="fail-desc">
+
+  <h2 id="fail-title">Penalty!</h2>
+
+  <p id="fail-desc">You moved when the light was red. Try again or restart!</p>
+
+  <button id="btn-restart">Restart</button>
+
+</div>
+
+
+<script>
+
+  (function(){
+
+    'use strict';
+
+
+    const gridSize = 7;
+
+    const gameGrid = document.getElementById('game-grid');
+
+    const status = document.getElementById('status');
+
+    const redLight = document.getElementById('redLight');
+
+    const greenLight = document.getElementById('greenLight');
+
+    const failOverlay = document.getElementById('fail-overlay');
+
+    const restartButton = document.getElementById('btn-restart');
+
+
+    // Controls buttons
+
+    const btnUp = document.getElementById('btn-up');
+
+    const btnDown = document.getElementById('btn-down');
+
+    const btnLeft = document.getElementById('btn-left');
+
+    const btnRight = document.getElementById('btn-right');
+
+
+    // Movement direction vectors (row,col)
+
+    const directions = {
+
+      ArrowUp: [-1, 0],
+
+      ArrowDown: [1, 0],
+
+      ArrowLeft: [0, -1],
+
+      ArrowRight: [0, 1],
+
+      btnUp: [-1, 0],
+
+      btnDown: [1, 0],
+
+      btnLeft: [0, -1],
+
+      btnRight: [0, 1]
+
+    };
+
+
+    let currentLight = 'red'; // starts at red
+
+    let playerPos = [gridSize - 1, 0]; // bottom left corner
+
+    const goalPos = [0, gridSize - 1]; // top right corner
+
+    let canMove = false;
+
+    let gameActive = true;
+
+
+    // Create grid and cells
+
+    const cells = [];
+
+    function createGrid() {
+
+      gameGrid.innerHTML = '';
+
+      for(let r=0; r<gridSize; r++) {
+
+        for(let c=0; c<gridSize; c++) {
+
+          const cell = document.createElement('div');
+
+          cell.className = 'cell';
+
+          cell.setAttribute('data-row', r);
+
+          cell.setAttribute('data-col', c);
+
+          if(r === goalPos[0] && c === goalPos[1]) {
+
+            cell.classList.add('goal');
+
+            cell.setAttribute('aria-label', 'Goal position');
+
+          }
+
+          gameGrid.appendChild(cell);
+
+          cells.push(cell);
+
+        }
+
+      }
+
+    }
+
+
+    // Render player position
+
+    function renderPlayer() {
+
+      cells.forEach(cell => {
+
+        cell.innerHTML = '';
+
+      });
+
+      const index = playerPos[0] * gridSize + playerPos[1];
+
+      const playerDiv = document.createElement('div');
+
+      playerDiv.className = 'player';
+
+      playerDiv.setAttribute('aria-label', 'Player');
+
+      cells[index].appendChild(playerDiv);
+
+    }
+
+
+    // Update traffic light display
+
+    function updateTrafficLight() {
+
+      if(currentLight === 'red') {
+
+        redLight.classList.add('active');
+
+        greenLight.classList.remove('active');
+
+        canMove = false;
+
+        status.textContent = "🚦 Light is RED. Don't move!";
+
+      } else {
+
+        redLight.classList.remove('active');
+
+        greenLight.classList.add('active');
+
+        canMove = true;
+
+        status.textContent = "🚦 Light is GREEN. You can move!";
+
+      }
+
+    }
+
+
+    // Traffic light cycle: red 5s, green 5s loop
+
+    function cycleTrafficLight() {
+
+      currentLight = (currentLight === 'red') ? 'green' : 'red';
+
+      updateTrafficLight();
+
+    }
+
+
+    // Check if move is valid in grid bounds
+
+    function canMoveTo(row, col) {
+
+      return row >= 0 && row < gridSize && col >= 0 && col < gridSize;
+
+    }
+
+
+    // Check if player reached the goal
+
+    function checkGoal() {
+
+      if(playerPos[0] === goalPos[0] && playerPos[1] === goalPos[1]) {
+
+        status.textContent = "🎉 You reached the goal! Congratulations!";
+
+        gameActive = false;
+
+        return true;
+
+      }
+
+      return false;
+
+    }
+
+
+    // Fail state - user moved when red light active
+
+    function triggerFail() {
+
+      gameActive = false;
+
+      failOverlay.classList.add('show');
+
+      status.textContent = "🚫 You moved on red! Penalty!";
+
+    }
+
+
+    // Restart game
+
+    function restartGame() {
+
+      playerPos = [gridSize -1, 0];
+
+      gameActive = true;
+
+      failOverlay.classList.remove('show');
+
+      status.textContent = '';
+
+      renderPlayer();
+
+      currentLight = 'red';
+
+      updateTrafficLight();
+
+    }
+
+
+    // Handle movement action
+
+    function movePlayer(direction) {
+
+      if(!gameActive) return;
+
+      if(!canMove) {
+
+        // Fail state - penalty for moving on red
+
+        triggerFail();
+
+        return;
+
+      }
+
+      const [dR, dC] = direction;
+
+      const newRow = playerPos[0] + dR;
+
+      const newCol = playerPos[1] + dC;
+
+      if(canMoveTo(newRow, newCol)) {
+
+        playerPos = [newRow, newCol];
+
+        renderPlayer();
+
+        if(checkGoal()) {
+
+          // game is done
+
+          return;
+
+        }
+
+      }
+
+    }
+
+
+    function onKeyDown(e) {
+
+      if(e.repeat) return;
+
+      if(!gameActive) return;
+
+      if(Object.keys(directions).includes(e.key)) {
+
+        e.preventDefault();
+
+        movePlayer(directions[e.key]);
+
+      }
+
+    }
+
+
+    // Button click handlers
+
+    btnUp.addEventListener('click', () => movePlayer(directions.btnUp));
+
+    btnDown.addEventListener('click', () => movePlayer(directions.btnDown));
+
+    btnLeft.addEventListener('click', () => movePlayer(directions.btnLeft));
+
+    btnRight.addEventListener('click', () => movePlayer(directions.btnRight));
+
+    restartButton.addEventListener('click', restartGame);
+
+
+    // Initialization
+
+    createGrid();
+
+    renderPlayer();
+
+    updateTrafficLight();
+
+
+    // Traffic light interval
+
+    setInterval(() => {
+
+      if(gameActive) {
+
+        cycleTrafficLight();
+
+      }
+
+    }, 5000);
+
+
+    // Keyboard events
+
+    window.addEventListener('keydown', onKeyDown, false);
+
+
+  })();
+
+</script>
+
+</body>
+
+</html>
