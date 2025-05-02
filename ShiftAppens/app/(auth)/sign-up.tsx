@@ -1,10 +1,18 @@
 import * as React from 'react'
-import { Text, TextInput, TouchableOpacity, View, StyleSheet } from 'react-native'
+import {
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  StyleSheet
+} from 'react-native'
 import { useSignUp } from '@clerk/clerk-expo'
+import { useSSO } from '@clerk/clerk-expo'
 import { Link, useRouter } from 'expo-router'
 
 export default function SignUpScreen() {
   const { isLoaded, signUp, setActive } = useSignUp()
+  const { startSSOFlow } = useSSO()
   const router = useRouter()
 
   const [emailAddress, setEmailAddress] = React.useState('')
@@ -32,12 +40,27 @@ export default function SignUpScreen() {
 
       if (signUpAttempt.status === 'complete') {
         await setActive({ session: signUpAttempt.createdSessionId })
-        router.replace('/')
+        router.replace('/(tabs)')
       } else {
         console.error(JSON.stringify(signUpAttempt, null, 2))
       }
     } catch (err) {
       console.error(JSON.stringify(err, null, 2))
+    }
+  }
+
+  const handleGoogleSignUp = async () => {
+    try {
+      const { createdSessionId, setActive } = await startSSOFlow({
+        strategy: 'oauth_google'
+      })
+
+      if (setActive && createdSessionId) {
+        await setActive({ session: createdSessionId })
+        router.replace('/(tabs)')
+      }
+    } catch (error) {
+      console.error('OAuth error:', error)
     }
   }
 
@@ -50,7 +73,7 @@ export default function SignUpScreen() {
           value={code}
           placeholder="Enter your verification code"
           placeholderTextColor="#ccc"
-          onChangeText={(code) => setCode(code)}
+          onChangeText={setCode}
         />
         <TouchableOpacity style={styles.button} onPress={onVerifyPress}>
           <Text style={styles.buttonText}>Verify</Text>
@@ -62,13 +85,14 @@ export default function SignUpScreen() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Sign Up</Text>
+
       <TextInput
         style={styles.input}
         autoCapitalize="none"
         value={emailAddress}
         placeholder="Enter email"
         placeholderTextColor="#ccc"
-        onChangeText={(email) => setEmailAddress(email)}
+        onChangeText={setEmailAddress}
       />
       <TextInput
         style={styles.input}
@@ -76,10 +100,14 @@ export default function SignUpScreen() {
         placeholder="Enter password"
         placeholderTextColor="#ccc"
         secureTextEntry={true}
-        onChangeText={(password) => setPassword(password)}
+        onChangeText={setPassword}
       />
       <TouchableOpacity style={styles.button} onPress={onSignUpPress}>
         <Text style={styles.buttonText}>Continue</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.googleButton} onPress={handleGoogleSignUp}>
+        <Text style={styles.googleButtonText}>Sign up with Google</Text>
       </TouchableOpacity>
 
       <View style={styles.footer}>
@@ -128,6 +156,23 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   buttonText: {
+    color: '#fff',
+    fontWeight: '600',
+    fontSize: 16,
+  },
+  googleButton: {
+    backgroundColor: '#1a73e8',
+    paddingVertical: 14,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginTop: 12,
+    shadowColor: '#1a73e8',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 4,
+  },
+  googleButtonText: {
     color: '#fff',
     fontWeight: '600',
     fontSize: 16,
