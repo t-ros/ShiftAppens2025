@@ -10,6 +10,7 @@
     "web": "expo start --web",
     "lint": "expo lint"
   },
+  
   "dependencies": {
     "@clerk/clerk-expo": "^2.10.7",
     "@expo/vector-icons": "^14.1.0",

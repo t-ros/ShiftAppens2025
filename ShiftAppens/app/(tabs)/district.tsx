@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Redirect } from 'expo-router';
+import { Redirect, useRouter } from 'expo-router';
 
 type Screen = 'Home' | 'City' | 'Profile';
 
@@ -30,6 +30,7 @@ const cities = [
 export default function App() {
   const [screen, setScreen] = useState<Screen>('Home');
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
+  const router = useRouter();
 
   const renderScreen = () => {
     switch (screen) {
@@ -47,8 +48,12 @@ export default function App() {
                   key={index}
                   style={styles.card}
                   onPress={() => {
-                    setSelectedCity(city.name);
-                    setScreen('City');
+                    if (city.name === 'Coimbra') {
+                      router.push('/(tabs)/sports');
+                    } else {
+                      setSelectedCity(city.name);
+                      setScreen('City');
+                    }
                   }}
                 >
                   <Image source={{ uri: city.image }} style={styles.image} />
