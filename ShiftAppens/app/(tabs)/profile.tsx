@@ -28,15 +28,17 @@ export default function App() {
   
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.scrollView}>
-        {/* Top App Bar */}
-        <View style={styles.topBar}>
-          <Feather name="more-horizontal" size={24} color="black" />
-          <View style={styles.avatar}>
-            <Feather name="user" size={24} color="black" />
-          </View>
-        </View>
+<SafeAreaView style={styles.container}>
+  <ScrollView style={styles.scrollView}>
+    {/* Top App Bar - REMOVIDO */}
+    {/* <View style={styles.topBar}>
+      <Feather name="more-horizontal" size={24} color="black" />
+      <View style={styles.avatar}>
+        <Feather name="user" size={24} color="black" />
+      </View>
+    </View> */}
+
+    {/* Resto do conteúdo */}
 
         {/* Profile Header */}
         <View style={styles.profileHeader}>

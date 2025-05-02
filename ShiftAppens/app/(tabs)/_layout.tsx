@@ -72,22 +72,6 @@ export default function _layout() {
         }}
       />
       <Tabs.Screen
-        name="reserve_field"
-        options={{
-          tabBarIcon: ({ color, focused }) => (
-            <TabIcon name="bookmark-outline" color={color} focused={focused} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="schedules"
-        options={{
-          tabBarIcon: ({ color, focused }) => (
-            <TabIcon name="notifications-outline" color={color} focused={focused} />
-          ),
-        }}
-      />
-      <Tabs.Screen
         name="profile"
         options={{
           tabBarIcon: ({ color, focused }) => (
