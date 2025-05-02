@@ -1,57 +1,66 @@
-import * as React from 'react';
-import { useRouter } from 'expo-router';
-import { useSSO } from '@clerk/clerk-expo';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { useSignIn } from '@clerk/clerk-expo'
+import { Link, useRouter } from 'expo-router'
+import { Text, TextInput, TouchableOpacity, View } from 'react-native'
+import React from 'react'
 
-export default function LoginScreen() {
-  const { startSSOFlow } = useSSO();
-  const router = useRouter();
+export default function Page() {
+  const { signIn, setActive, isLoaded } = useSignIn()
+  const router = useRouter()
 
-  const handleGoogleSignIn = async () => {
+  const [emailAddress, setEmailAddress] = React.useState('')
+  const [password, setPassword] = React.useState('')
+
+  // Handle the submission of the sign-in form
+  const onSignInPress = async () => {
+    if (!isLoaded) return
+
+    // Start the sign-in process using the email and password provided
     try {
-      const { createdSessionId, setActive } = await startSSOFlow({
-        strategy: 'oauth_google',
-      });
+      const signInAttempt = await signIn.create({
+        identifier: emailAddress,
+        password,
+      })
 
-      if (setActive && createdSessionId) {
-        await setActive({ session: createdSessionId });
-        router.replace('/(tabs)');
+      // If sign-in process is complete, set the created session as active
+      // and redirect the user
+      if (signInAttempt.status === 'complete') {
+        await setActive({ session: signInAttempt.createdSessionId })
+        router.replace('/(tabs)/profile')
+      } else {
+        // If the status isn't complete, check why. User might need to
+        // complete further steps.
+        console.error(JSON.stringify(signInAttempt, null, 2))
       }
-    } catch (error) {
-      console.error('OAuth error', error);
+    } catch (err) {
+      // See https://clerk.com/docs/custom-flows/error-handling
+      // for more info on error handling
+      console.error(JSON.stringify(err, null, 2))
     }
-  };
+  }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Bem-vindo</Text>
-      <TouchableOpacity style={styles.button} onPress={handleGoogleSignIn}>
-        <Text style={styles.buttonText}>Entrar com Google</Text>
+    <View>
+      <Text>Sign in</Text>
+      <TextInput
+        autoCapitalize="none"
+        value={emailAddress}
+        placeholder="Enter email"
+        onChangeText={(emailAddress) => setEmailAddress(emailAddress)}
+      />
+      <TextInput
+        value={password}
+        placeholder="Enter password"
+        secureTextEntry={true}
+        onChangeText={(password) => setPassword(password)}
+      />
+      <TouchableOpacity onPress={onSignInPress}>
+        <Text>Continue</Text>
       </TouchableOpacity>
+      <View style={{ display: 'flex', flexDirection: 'row', gap: 3 }}>
+        <Link href="/sign-up">
+          <Text>Sign up</Text>
+        </Link>
+      </View>
     </View>
-  );
+  )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    padding: 16,
-  },
-  title: {
-    fontSize: 24,
-    marginBottom: 24,
-  },
-  button: {
-    backgroundColor: '#4285F4',
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 8,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-  },
-});
