@@ -1,14 +1,20 @@
 {
   "expo": {
-    "name": "OteuApp",
-    "slug": "oteuapp",
+    "name": "ShiftAppens",
+    "slug": "ShiftAppens",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/logo/iphone_test.png",
+    "scheme": "shiftappens",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
     "splash": {
       "image": "./assets/logo/iphone_test.png",
       "resizeMode": "cover",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#000000"
+    },
+    "ios": {
+      "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
