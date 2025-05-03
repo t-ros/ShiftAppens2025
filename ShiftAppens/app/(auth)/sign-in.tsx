@@ -10,55 +10,92 @@ export default function Page() {
   const [emailAddress, setEmailAddress] = React.useState('')
   const [password, setPassword] = React.useState('')
 
-  // Handle the submission of the sign-in form
   const onSignInPress = async () => {
     if (!isLoaded) return
 
-    // Start the sign-in process using the email and password provided
     try {
       const signInAttempt = await signIn.create({
         identifier: emailAddress,
         password,
       })
 
-      // If sign-in process is complete, set the created session as active
-      // and redirect the user
       if (signInAttempt.status === 'complete') {
         await setActive({ session: signInAttempt.createdSessionId })
-        router.replace('/(tabs)/district')
+        router.replace('/(tabs)')
       } else {
-        // If the status isn't complete, check why. User might need to
-        // complete further steps.
         console.error(JSON.stringify(signInAttempt, null, 2))
       }
     } catch (err) {
-      // See https://clerk.com/docs/custom-flows/error-handling
-      // for more info on error handling
       console.error(JSON.stringify(err, null, 2))
     }
   }
 
   return (
-    <View>
-      <Text>Sign in</Text>
+    <View style={{
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 20,
+      backgroundColor: '#FFF5E6' // fundo suave
+    }}>
+      <Text style={{
+        fontSize: 28,
+        fontWeight: 'bold',
+        marginBottom: 20,
+        color: '#FF7F50' // Coral (laranja suave)
+      }}>
+        Sign in
+      </Text>
       <TextInput
         autoCapitalize="none"
         value={emailAddress}
         placeholder="Enter email"
+        placeholderTextColor="#FFB07C"
         onChangeText={(emailAddress) => setEmailAddress(emailAddress)}
+        style={{
+          width: '100%',
+          padding: 12,
+          marginBottom: 12,
+          borderWidth: 1,
+          borderColor: '#FFA366',
+          borderRadius: 8,
+          backgroundColor: '#FFF',
+          color: '#333'
+        }}
       />
       <TextInput
         value={password}
         placeholder="Enter password"
+        placeholderTextColor="#FFB07C"
         secureTextEntry={true}
         onChangeText={(password) => setPassword(password)}
+        style={{
+          width: '100%',
+          padding: 12,
+          marginBottom: 20,
+          borderWidth: 1,
+          borderColor: '#FFA366',
+          borderRadius: 8,
+          backgroundColor: '#FFF',
+          color: '#333'
+        }}
       />
-      <TouchableOpacity onPress={onSignInPress}>
-        <Text>Continue</Text>
+      <TouchableOpacity
+        onPress={onSignInPress}
+        style={{
+          backgroundColor: '#FF7F50',
+          paddingVertical: 12,
+          paddingHorizontal: 32,
+          borderRadius: 8,
+          marginBottom: 16
+        }}
+      >
+        <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 16 }}>Continue</Text>
       </TouchableOpacity>
-      <View style={{ display: 'flex', flexDirection: 'row', gap: 3 }}>
+      <View style={{ flexDirection: 'row', gap: 3 }}>
+        <Text style={{ color: '#444' }}>Don't have an account? </Text>
         <Link href="/sign-up">
-          <Text>Sign up</Text>
+          <Text style={{ color: '#FF7F50', fontWeight: 'bold' }}>Sign up</Text>
         </Link>
       </View>
     </View>

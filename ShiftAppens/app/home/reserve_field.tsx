@@ -47,7 +47,8 @@ const FacilityCard: React.FC<FacilityCardProps> = ({ id, title, image, isFavorit
 }
 
 const HomeScreen: React.FC = () => {
-  // Sample data with local images for the first two facilities
+  const router = useRouter(); // 👈 IMPORTANTE
+
   const facilitiesData = [
     {
       id: "1",
@@ -64,23 +65,17 @@ const HomeScreen: React.FC = () => {
       title: "Rede Exterior - Estádio Universitário",
       image: { uri: "https://picsum.photos/600/400?random=3" },
     },
-  ]
+  ];
 
-  // State to track favorited facilities
-  const [favoritedFacilities, setFavoritedFacilities] = useState<string[]>([])
+  const [favoritedFacilities, setFavoritedFacilities] = useState<string[]>([]);
 
-  // Toggle favorite status
   const toggleFavorite = (facilityId: string) => {
-    setFavoritedFacilities((prevFavorites) => {
-      if (prevFavorites.includes(facilityId)) {
-        // Remove from favorites
-        return prevFavorites.filter((id) => id !== facilityId)
-      } else {
-        // Add to favorites
-        return [...prevFavorites, facilityId]
-      }
-    })
-  }
+    setFavoritedFacilities((prevFavorites) =>
+      prevFavorites.includes(facilityId)
+        ? prevFavorites.filter((id) => id !== facilityId)
+        : [...prevFavorites, facilityId]
+    );
+  };
 
   return (
     <View style={styles.container}>
@@ -96,14 +91,14 @@ const HomeScreen: React.FC = () => {
             title={facility.title}
             image={facility.image}
             isFavorited={favoritedFacilities.includes(facility.id)}
-            onPress={() => console.log(`Pressed ${facility.title}`)}
+            onPress={() => router.push("/home/schedules")} // 👈 AQUI
             onFavorite={() => toggleFavorite(facility.id)}
           />
         ))}
       </ScrollView>
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {

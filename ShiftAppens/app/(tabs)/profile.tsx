@@ -5,8 +5,8 @@ import { MaterialIcons, Feather } from '@expo/vector-icons';
 export default function App() {
   // Profile data
   const profileData = {
-    name: "Zeca Afonso",
-    username: "@zecaafonso",
+    name: "pedro carvalho",
+    username: "@pedro",
     commonConnections: 5,
     location: "Coimbra",
     stats: [
@@ -44,7 +44,7 @@ export default function App() {
         <View style={styles.profileHeader}>
           <View style={styles.profileImage}>
             <Image
-              source={require('../../assets/images/logoprofile.png')}
+              source={require('../../assets/images/logoprofile.jpg')}
               style={styles.image}
             />
           </View>
